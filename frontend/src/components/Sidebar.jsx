@@ -8,11 +8,7 @@ const Sidebar = () => {
     const logoutHandler = async () => {
         try {
             const accessToken = localStorage.getItem('accessToken');
-            const res = await API.post('/auth/logout', {},{
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            })
+            const res = await API.post('/auth/logout', {})
             if (res.data.success) {
                 toast.success(res.data?.message);
                 localStorage.removeItem('accessToken');
@@ -24,7 +20,7 @@ const Sidebar = () => {
         }
     }
     return (
-        <div className="flex flex-col justify-between w-64  h-screen pt-4 bg-[#042f2b] text-white">
+        <div className="flex flex-col justify-between w-64  h-screen pt-4 bg-[#042f2b] text-[#08cdbd]">
             <div className="flex flex-col gap-2 p-2">
 
                 <NavLink
