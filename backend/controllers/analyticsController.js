@@ -96,7 +96,7 @@ export const serveTrackerScript = async (req, res) => {
 export const getAnalytics = async (req, res) => {
     try {
         const { siteId } = req.params;
-        const analytics = await PageVisit.aggregate([
+        const totalVisits = await PageVisit.aggregate([
             {
                 $match: {
                     siteId: new mongoose.Types.ObjectId(siteId)
@@ -105,22 +105,69 @@ export const getAnalytics = async (req, res) => {
             {
                 $group:
                 {
-                    _id: "$siteId",
+                    _id: null,
                     totalVisits: { $sum: 1 },
-                    uniqueVisitors: { $addToSet: "$sessionId" }
+                }
+            }
+        ])
+
+        const uniqueVisitors = await PageVisit.aggregate([
+            {
+                $match: {
+                    siteId: new mongoose.Types.ObjectId(siteId)
+                }
+            },
+            {
+                $group: {
+                    _id: "$sessionId",
+                }
+            },
+            {
+                $count: "uniqueVisitors"
+            }
+        ])
+        const referrerls = await PageVisit.aggregate([
+            {
+                $match:{
+                    siteId:new mongoose.Types.ObjectId(siteId),
+                    referrer:{
+                        $not:/localhost/,
+                        $ne:null      
+                    }
+                }
+            },
+            {
+                $group:{
+                   _id:"$referrer"
+                }
+            }
+        ])
+        const PerPageVisits=await PageVisit.aggregate([
+            {
+                $match:{
+                    siteId:new mongoose.Types.ObjectId(siteId)
+                }
+            },
+            {
+                $group:{
+                    _id:"$pageUrl",
+                    PerPageVisits:{$count:{}}
                 }
             }
         ])
         return res.status(200).json({
             success: true,
             message: "Analytics Fetched Successfully",
-            analytics
+            totalVisits: totalVisits[0].totalVisits || 0,
+            uniqueVisitors: uniqueVisitors[0].uniqueVisitors || 0,
+            PerPageVisits,
+            referrerls,
         })
     } catch (error) {
         return res.status(500).json({
             success: false,
             message: "Internal Server Error",
-            error:error.message
+            error: error.message
         })
     }
 }
