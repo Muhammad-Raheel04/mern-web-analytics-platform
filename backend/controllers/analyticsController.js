@@ -128,31 +128,73 @@ export const getAnalytics = async (req, res) => {
         ])
         const referrerls = await PageVisit.aggregate([
             {
-                $match:{
-                    siteId:new mongoose.Types.ObjectId(siteId),
-                    referrer:{
-                        $not:/localhost/,
-                        $ne:null      
+                $match: {
+                    siteId: new mongoose.Types.ObjectId(siteId),
+                    referrer: {
+                        $not: /localhost/,
+                        $ne: null
                     }
                 }
             },
             {
-                $group:{
-                   _id:"$referrer"
+                $group: {
+                    _id: "$referrer"
                 }
             }
         ])
-        const PerPageVisits=await PageVisit.aggregate([
+        const PerPageVisits = await PageVisit.aggregate([
             {
-                $match:{
-                    siteId:new mongoose.Types.ObjectId(siteId)
+                $match: {
+                    siteId: new mongoose.Types.ObjectId(siteId)
                 }
             },
             {
-                $group:{
-                    _id:"$pageUrl",
-                    PerPageVisits:{$count:{}}
+                $group: {
+                    _id: "$pageUrl",
+                    PerPageVisits: { $count: {} }
                 }
+            }
+        ])
+        const topPage = await PageVisit.aggregate([
+            {
+                $match: {
+                    siteId: new mongoose.Types.ObjectId(siteId)
+                }
+            },
+            {
+                $group: {
+                    _id: "$pageUrl",
+                    totalVisits: { $sum: 1 }
+                }
+            },
+            {
+                $sort: {
+                    totalVisits: -1
+                }
+            },
+            {
+                $limit: 1
+            }
+        ])
+        const topReferrer = await PageVisit.aggregate([
+            {
+                $match: {
+                    siteId: new mongoose.Types.ObjectId(siteId)
+                }
+            },
+            {
+                $group: {
+                    _id: "$referrer",
+                    referrerCount:{$count:{}}
+                }
+            },
+            {
+                $sort:{
+                    referCount:1
+                }
+            },
+            {
+                $limit:1
             }
         ])
         return res.status(200).json({
@@ -162,6 +204,8 @@ export const getAnalytics = async (req, res) => {
             uniqueVisitors: uniqueVisitors[0].uniqueVisitors || 0,
             PerPageVisits,
             referrerls,
+            topPage,
+            topReferrer,
         })
     } catch (error) {
         return res.status(500).json({
