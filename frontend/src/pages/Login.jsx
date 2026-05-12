@@ -28,7 +28,7 @@ const Login = () => {
       toast.success(res.data.message);
       localStorage.setItem('accessToken',res.data?.accessToken)
       localStorage.setItem('refreshToken',res.data?.refreshToken);
-      navigate('/dashboard');
+      navigate('/dashboard/overview');
       dispatch(setUser(res.data.user));
      
     } catch (error) {
