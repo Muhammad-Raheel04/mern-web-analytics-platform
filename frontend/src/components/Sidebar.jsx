@@ -22,7 +22,7 @@ const Sidebar = () => {
     return (
         <div className="flex flex-col justify-between w-64  h-screen pt-4 bg-[#042f2b] text-[#08cdbd]">
             <div className="flex flex-col gap-2 p-2">
-
+                <h1 className="text-white p-2 text-2xl">Tracker</h1>
                 <NavLink
                     to='/dashboard/overview'
                     className={({ isActive }) =>
