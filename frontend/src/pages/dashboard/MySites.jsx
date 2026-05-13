@@ -40,7 +40,7 @@ const MySites = () => {
         navigate(`/dashboard/analytics/${id}`);
     }
     return (
-        <div className="min-h-screen p-6 bg-[#003F3A]">
+        <div className="h-screen p-6 bg-[#003F3A] overflow-y-auto w-full ">
 
             <h2 className="text-5xl text-[#08cdbd] font-light mb-6 text-center">
                 My Sites
