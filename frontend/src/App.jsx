@@ -9,6 +9,7 @@ import MySites from './pages/dashboard/MySites';
 import AddSite from './pages/dashboard/AddSite';
 import Overview from './pages/dashboard/Overview';
 import Analytics from './pages/dashboard/Analytics';
+import ProtectRoute from './components/ProtectRoute';
 const router=createBrowserRouter([
   {
     path:"/",
@@ -24,7 +25,7 @@ const router=createBrowserRouter([
   },
   {
     path:"/dashboard",
-    element:<><Dashboard></Dashboard></>,
+    element:<><ProtectRoute><Dashboard></Dashboard></ProtectRoute></>,
     children:[
       {
         path:'overview',
