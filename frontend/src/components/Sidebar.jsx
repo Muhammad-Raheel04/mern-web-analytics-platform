@@ -2,9 +2,12 @@ import { ChartArea, Globe, LayoutDashboard, LogOut, Trash } from "lucide-react"
 import toast from "react-hot-toast"
 import { NavLink, useNavigate } from "react-router-dom"
 import API from "../utils/API"
+import { useDispatch } from "react-redux"
+import { setUser } from "../redux/userSlice"
 
 const Sidebar = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const logoutHandler = async () => {
         try {
             const accessToken = localStorage.getItem('accessToken');
@@ -12,6 +15,7 @@ const Sidebar = () => {
             if (res.data.success) {
                 toast.success(res.data?.message);
                 localStorage.removeItem('accessToken');
+                dispatch(setUser(null));
                 navigate('/')
             }
         } catch (error) {
